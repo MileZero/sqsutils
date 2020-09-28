@@ -1,11 +1,8 @@
-# Blank function (Java)
-
-![Architecture](/sample-apps/blank-java/images/sample-blank-java.png)
+# SQSUtils (Java)
 
 The project source includes function code and supporting resources:
 
-- `src/main` - A Java function.
-- `src/test` - A unit test and helper classes.
+- `src/main` - Main Handler class with supporting classes/methods.
 - `template.yml` - An AWS CloudFormation template that creates an application.
 - `build.gradle` - A Gradle build file.
 - `pom.xml` - A Maven build file.
