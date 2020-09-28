@@ -1,0 +1,31 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: 'AWS::Serverless-2016-10-31'
+Description: An AWS Lambda application that hosts SQS util functions.
+Resources:
+  function:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: build/distributions/sqsutils.zip
+      Handler: com.mz.sqsutils.Handler::handleRequest
+      Runtime: java8
+      Description: Java SQS util lambda function.
+      MemorySize: 512
+      Timeout: 300
+      # Function's execution role
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - AWSLambdaReadOnlyAccess
+        - AWSXrayWriteOnlyAccess
+        - AWSLambdaVPCAccessExecutionRole
+        - arn:aws:iam::480267052437:policy/LambdaSQSUtils_ReadWrite
+      Tracing: Active
+      Layers:
+        - !Ref libs
+  libs:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      LayerName: sqsutils-lib
+      Description: Dependencies for the sqsutils sample app.
+      ContentUri: build/sqsutils-lib.zip
+      CompatibleRuntimes:
+        - java8
