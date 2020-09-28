@@ -18,6 +18,11 @@ Resources:
         - AWSXrayWriteOnlyAccess
         - AWSLambdaVPCAccessExecutionRole
         - arn:aws:iam::480267052437:policy/LambdaSQSUtils_ReadWrite
+      Environment:
+        Variables:
+          command: REDRIVE
+          fromQueue: WebhooksOutboxProdDLQ-ca3ffc06-b583-409f-a249-bdd014e21e31_eww8813p7mez
+          toQueue: WebhooksOutboxProd-ca3ffc06-b583-409f-a249-bdd014e21e31_eww8813p7mez
       Tracing: Active
       Layers:
         - !Ref libs
