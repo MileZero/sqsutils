@@ -18,8 +18,11 @@ import com.mz.hei.models.model.Event;
 import com.mz.jacksonutil.ObjectMapperBuilder;
 import java.io.IOException;
 import java.lang.StringBuilder;
+import java.time.DayOfWeek;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.time.ZoneId;
+import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -210,7 +213,14 @@ public class Handler implements RequestHandler<SQSEvent, String> {
                 HashMap<String, Object> event = objectMapper.readValue(payload, HashMap.class);
                 event = objectMapper.readValue(event.get("payload").toString(), HashMap.class);
                 boolean badStatus = messageBody.contains("https://hooks.slack.com/services/");
-                return Instant.parse(event.get("statusTime").toString()).isAfter(Instant.now().minus(3, ChronoUnit.DAYS))
+                DayOfWeek currentDay = Instant.now().atZone(ZoneId.systemDefault()).getDayOfWeek();
+                Integer maxDayAge;
+                if (Arrays.asList(DayOfWeek.SATURDAY, DayOfWeek.SUNDAY, DayOfWeek.MONDAY, DayOfWeek.TUESDAY).contains(currentDay)) {
+                    maxDayAge = 5;
+                } else {
+                    maxDayAge = 3;
+                }
+                return Instant.parse(event.get("statusTime").toString()).isAfter(Instant.now().minus(maxDayAge, ChronoUnit.DAYS))
                         && !badStatus;
             } catch (IOException ioe) {
                 throw new RuntimeException(ioe);
@@ -225,7 +235,6 @@ public class Handler implements RequestHandler<SQSEvent, String> {
                                  (String) options.get("toQueue"),
                                  heiInputQueueEmptyCheck,
                                  logger
-
                                  )
                 .call();
             return response;
